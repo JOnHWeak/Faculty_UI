@@ -47,7 +47,7 @@ const QuestionAnalytics = () => {
   return (
     <div className="question-analytics">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>Thống kê câu hỏi và mối quan tâm</h1>
+        {/* <h1>Thống kê câu hỏi và mối quan tâm</h1> */}
         
         <div className="d-flex align-items-center gap-2">
           <label className="form-label mb-0">Khoảng thời gian:</label>
@@ -84,7 +84,7 @@ const QuestionAnalytics = () => {
           </div>
         </div>
 
-        <div className="card">
+        {/* <div className="card">
           <div className="card-body text-center">
             <div style={{ fontSize: '32px', color: '#52c41a', marginBottom: '8px' }}>
               🏆
@@ -96,9 +96,9 @@ const QuestionAnalytics = () => {
               Môn học được hỏi nhiều nhất
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="card">
+        {/* <div className="card">
           <div className="card-body text-center">
             <div style={{ fontSize: '32px', color: '#faad14', marginBottom: '8px' }}>
               🔥
@@ -110,7 +110,7 @@ const QuestionAnalytics = () => {
               Chủ đề phổ biến nhất
             </div>
           </div>
-        </div>
+        </div> */}
 
 
       </div>
@@ -137,7 +137,7 @@ const QuestionAnalytics = () => {
       {/* Trend Chart */}
       <div className="card mb-4">
         <div className="card-header">
-          <h3 className="card-title">Xu hướng số câu hỏi theo thời gian</h3>
+          <h3 className="card-title">Số câu hỏi được hỏi nhiều nhất theo thời gian</h3>
         </div>
         <div className="card-body">
           <TrendChart data={analyticsData.trendData} />
@@ -155,7 +155,6 @@ const QuestionAnalytics = () => {
               <tr>
                 <th>Sinh viên</th>
                 <th>Nội dung câu hỏi</th>
-                <th>Môn học</th>
                 <th>Thời gian</th>
               </tr>
             </thead>
@@ -174,14 +173,7 @@ const QuestionAnalytics = () => {
                       {question.content}
                     </div>
                   </td>
-                  <td>
-                    <span className="status-badge" style={{ 
-                      backgroundColor: '#e6f7ff', 
-                      color: '#0958d9' 
-                    }}>
-                      {question.course}
-                    </span>
-                  </td>
+
                   <td style={{ fontSize: '12px', color: '#8c8c8c' }}>
                     {new Date(question.timestamp).toLocaleDateString('vi-VN', {
                       month: '2-digit',

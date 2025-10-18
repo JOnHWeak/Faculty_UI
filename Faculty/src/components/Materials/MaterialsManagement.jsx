@@ -98,7 +98,7 @@ const MaterialsManagement = () => {
   return (
     <div className="materials-management">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>Quản lý tài liệu học tập</h1>
+        {/* <h1>Quản lý tài liệu học tập</h1> */}
         <div className="d-flex gap-2">
           <button
             className="btn btn-secondary"

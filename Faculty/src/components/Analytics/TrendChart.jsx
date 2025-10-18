@@ -139,31 +139,43 @@ const TrendChart = ({ data }) => {
                 {/* Tooltip */}
                 <g id={`tooltip-${index}`} style={{ display: 'none' }}>
                   <rect
-                    x={x - 30}
-                    y={y - 35}
-                    width="60"
-                    height="25"
-                    fill="rgba(0, 0, 0, 0.8)"
-                    rx="4"
+                    x={x - 120}
+                    y={y - 55}
+                    width="240"
+                    height="45"
+                    fill="rgba(0, 0, 0, 0.9)"
+                    rx="6"
                   />
                   <text
                     x={x}
-                    y={y - 20}
+                    y={y - 35}
                     textAnchor="middle"
                     fontSize="11"
                     fill="white"
                     fontWeight="600"
                   >
-                    {item.count} câu hỏi
+                    {formatDate(item.date)} - {item.count} câu hỏi
                   </text>
                   <text
                     x={x}
-                    y={y - 10}
+                    y={y - 20}
+                    textAnchor="middle"
+                    fontSize="10"
+                    fill="#ffd666"
+                    fontWeight="500"
+                  >
+                    Câu hỏi phổ biến nhất:
+                  </text>
+                  <text
+                    x={x}
+                    y={y - 8}
                     textAnchor="middle"
                     fontSize="10"
                     fill="white"
                   >
-                    {formatDate(item.date)}
+                    {item.topQuestion && item.topQuestion.length > 35
+                      ? item.topQuestion.substring(0, 35) + "..."
+                      : item.topQuestion || "Không có dữ liệu"}
                   </text>
                 </g>
               </g>

@@ -7,8 +7,6 @@ import FlaggedConversations from './components/Conversations/FlaggedConversation
 import ConversationDetail from './components/Conversations/ConversationDetail';
 import MaterialsManagement from './components/Materials/MaterialsManagement';
 import QuestionAnalytics from './components/Analytics/QuestionAnalytics';
-import KnowledgeGapAnalysis from './components/KnowledgeGap/KnowledgeGapAnalysis';
-import QuizDetail from './components/KnowledgeGap/QuizDetail';
 
 import './App.css';
 
@@ -25,8 +23,6 @@ function App() {
               <Route path="conversations/:id" element={<ConversationDetail />} />
               <Route path="materials" element={<MaterialsManagement />} />
               <Route path="analytics" element={<QuestionAnalytics />} />
-              <Route path="knowledge-gap" element={<KnowledgeGapAnalysis />} />
-              <Route path="knowledge-gap/quiz/:id" element={<QuizDetail />} />
 
             </Route>
           </Routes>

@@ -91,7 +91,7 @@ const FAQManagement = () => {
   return (
     <div className="faq-management">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>Quản lý FAQ</h1>
+        {/* <h1>Quản lý FAQ</h1> */}
         <button className="btn btn-primary" onClick={handleCreateFAQ}>
           ➕ Thêm FAQ mới
         </button>

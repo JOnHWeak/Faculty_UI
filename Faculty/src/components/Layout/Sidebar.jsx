@@ -30,12 +30,6 @@ const Sidebar = () => {
       label: 'Thống kê câu hỏi',
       badge: null
     },
-    {
-      path: '/knowledge-gap',
-      icon: '🎯',
-      label: 'Lỗ hổng kiến thức',
-      badge: null
-    },
 
   ];
 

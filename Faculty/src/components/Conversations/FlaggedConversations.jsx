@@ -73,7 +73,7 @@ const FlaggedConversations = () => {
   return (
     <div className="flagged-conversations">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>Hội thoại gắn cờ</h1>
+        {/* <h1>Hội thoại gắn cờ</h1> */}
         <div className="d-flex align-items-center gap-2">
           <span className="badge" style={{ backgroundColor: '#ff4d4f', color: 'white', padding: '4px 8px' }}>
             {conversations.filter(c => c.status === 'Mới').length} cờ mới

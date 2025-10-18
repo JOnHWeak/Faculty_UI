@@ -408,13 +408,13 @@ export const mockAnalyticsData = {
     { course: "Kiểm thử phần mềm", count: 240 }
   ],
   trendData: [
-    { date: "2024-10-11", count: 45 },
-    { date: "2024-10-12", count: 52 },
-    { date: "2024-10-13", count: 38 },
-    { date: "2024-10-14", count: 61 },
-    { date: "2024-10-15", count: 48 },
-    { date: "2024-10-16", count: 55 },
-    { date: "2024-10-17", count: 43 }
+    { date: "2024-10-11", count: 45, topQuestion: "Singleton pattern hoạt động như thế nào?" },
+    { date: "2024-10-12", count: 52, topQuestion: "Cách implement Observer pattern trong Java?" },
+    { date: "2024-10-13", count: 38, topQuestion: "Phân biệt Abstract Factory và Factory Method?" },
+    { date: "2024-10-14", count: 61, topQuestion: "Cách tối ưu hóa query trong SQL?" },
+    { date: "2024-10-15", count: 48, topQuestion: "Unit testing với JUnit như thế nào?" },
+    { date: "2024-10-16", count: 55, topQuestion: "Cách sử dụng React Hooks hiệu quả?" },
+    { date: "2024-10-17", count: 43, topQuestion: "Microservices architecture có ưu điểm gì?" }
   ],
   recentQuestions: [
     {
