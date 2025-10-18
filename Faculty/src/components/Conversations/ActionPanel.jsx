@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 const ActionPanel = ({
   conversation,
   onMarkAsRead,
-  onResolve,
-  onEditAIResponse
+  onResolve
 }) => {
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolveReason, setResolveReason] = useState('');
@@ -39,13 +38,7 @@ const ActionPanel = ({
             </button>
           )}
 
-          {/* Edit AI Response */}
-          <button
-            className="btn btn-secondary w-100"
-            onClick={onEditAIResponse}
-          >
-            ✏️ Chỉnh sửa câu trả lời AI
-          </button>
+
 
           {/* Resolve */}
           {canResolve && (

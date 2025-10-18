@@ -398,8 +398,7 @@ export const mockAnalyticsData = {
   overview: {
     totalQuestions: 1234,
     topCourse: "Lập trình hướng đối tượng",
-    topTopic: "Design Patterns",
-    satisfaction: 87
+    topTopic: "Design Patterns"
   },
   courseStats: [
     { course: "Lập trình hướng đối tượng", count: 450 },
@@ -407,13 +406,6 @@ export const mockAnalyticsData = {
     { course: "Cơ sở dữ liệu", count: 320 },
     { course: "Phát triển ứng dụng web", count: 280 },
     { course: "Kiểm thử phần mềm", count: 240 }
-  ],
-  topicDistribution: [
-    { topic: "OOP", value: 35, color: "#1890ff" },
-    { topic: "Design Pattern", value: 25, color: "#52c41a" },
-    { topic: "Database", value: 20, color: "#faad14" },
-    { topic: "Testing", value: 12, color: "#f5222d" },
-    { topic: "Web Development", value: 8, color: "#722ed1" }
   ],
   trendData: [
     { date: "2024-10-11", count: 45 },

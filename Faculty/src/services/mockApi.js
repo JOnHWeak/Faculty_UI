@@ -160,7 +160,7 @@ export const updateAIResponse = async (conversationId, messageId, newContent) =>
     return { success: false, error: "Message not found" };
   }
 
-  if (message.author !== 'AI') {
+  if (message.author.role !== 'ai') {
     return { success: false, error: "Message is not from AI" };
   }
 

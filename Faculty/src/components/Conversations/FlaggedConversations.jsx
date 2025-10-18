@@ -68,11 +68,7 @@ const FlaggedConversations = () => {
 
 
 
-  const getConfidenceColor = (confidence) => {
-    if (confidence < 30) return '#ff4d4f';
-    if (confidence < 70) return '#faad14';
-    return '#52c41a';
-  };
+
 
   return (
     <div className="flagged-conversations">

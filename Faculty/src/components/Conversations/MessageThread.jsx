@@ -1,6 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const MessageThread = ({ messages }) => {
+const MessageThread = ({ messages, onUpdateMessage }) => {
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editContent, setEditContent] = useState('');
+
+  const handleStartEdit = (message) => {
+    setEditingMessageId(message.id);
+    setEditContent(message.content);
+  };
+
+  const handleSaveEdit = async (messageId) => {
+    if (onUpdateMessage && editContent.trim()) {
+      try {
+        await onUpdateMessage(messageId, editContent.trim());
+        setEditingMessageId(null);
+        setEditContent('');
+      } catch (error) {
+        console.error('Error updating message:', error);
+      }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditContent('');
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -48,7 +73,7 @@ const MessageThread = ({ messages }) => {
     }
   };
 
-  const getSourceBadge = (sourceLabel, role, aiConfidence) => {
+  const getSourceBadge = (sourceLabel, role) => {
     let badgeStyle = {
       fontSize: '11px',
       padding: '2px 6px',
@@ -91,15 +116,7 @@ const MessageThread = ({ messages }) => {
     return (
       <div style={badgeStyle}>
         {sourceLabel}
-        {role === 'ai' && aiConfidence && (
-          <span style={{ 
-            marginLeft: '4px',
-            color: aiConfidence < 30 ? '#ff4d4f' : 
-                   aiConfidence < 70 ? '#faad14' : '#52c41a'
-          }}>
-            ({aiConfidence}%)
-          </span>
-        )}
+
       </div>
     );
   };
@@ -129,27 +146,68 @@ const MessageThread = ({ messages }) => {
               }}
             >
               {/* Source Badge */}
-              {getSourceBadge(message.sourceLabel, message.author.role, message.aiConfidence)}
+              {getSourceBadge(message.sourceLabel, message.author.role)}
               
-              {/* Author Info */}
-              <div style={{ 
-                fontSize: '13px', 
-                fontWeight: '600',
-                color: '#262626',
+              {/* Author Info & Edit Button */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 marginBottom: '4px'
               }}>
-                {message.author.name}
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#262626',
+                }}>
+                  {message.author.name}
+                </div>
+                {message.author.role === 'ai' && editingMessageId !== message.id && (
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    style={{ fontSize: '11px', padding: '1px 5px' }}
+                    onClick={() => handleStartEdit(message)}
+                  >
+                    ✏️ Chỉnh sửa
+                  </button>
+                )}
               </div>
-              
-              {/* Message Content */}
-              <div style={{ 
-                fontSize: '14px',
-                lineHeight: '1.5',
-                color: '#262626',
-                marginBottom: '8px'
-              }}>
-                {message.content}
-              </div>
+
+              {/* Message Content or Editor */}
+              {editingMessageId === message.id ? (
+                <div className="mb-2">
+                  <textarea
+                    className="form-control"
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    rows={5}
+                    style={{ resize: 'vertical', fontSize: '14px' }}
+                  />
+                  <div className="d-flex justify-content-end gap-2 mt-2">
+                    <button
+                      className="btn btn-sm btn-secondary"
+                      onClick={handleCancelEdit}
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => handleSaveEdit(message.id)}
+                    >
+                      Lưu
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  fontSize: '14px',
+                  lineHeight: '1.5',
+                  color: '#262626',
+                  marginBottom: '8px'
+                }}>
+                  {message.content}
+                </div>
+              )}
               
               {/* Timestamp */}
               <div style={{ 
@@ -160,44 +218,7 @@ const MessageThread = ({ messages }) => {
                 {formatDate(message.timestamp)}
               </div>
               
-              {/* AI Confidence Indicator for AI messages */}
-              {message.author.role === 'ai' && message.aiConfidence && (
-                <div style={{ 
-                  marginTop: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <span style={{ fontSize: '11px', color: '#8c8c8c' }}>
-                    Độ tin cậy:
-                  </span>
-                  <div style={{
-                    flex: 1,
-                    height: '6px',
-                    backgroundColor: '#f0f0f0',
-                    borderRadius: '3px',
-                    overflow: 'hidden'
-                  }}>
-                    <div
-                      style={{
-                        width: `${message.aiConfidence}%`,
-                        height: '100%',
-                        backgroundColor: message.aiConfidence < 30 ? '#ff4d4f' : 
-                                       message.aiConfidence < 70 ? '#faad14' : '#52c41a',
-                        transition: 'width 0.3s'
-                      }}
-                    />
-                  </div>
-                  <span style={{ 
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    color: message.aiConfidence < 30 ? '#ff4d4f' : 
-                           message.aiConfidence < 70 ? '#faad14' : '#52c41a'
-                  }}>
-                    {message.aiConfidence}%
-                  </span>
-                </div>
-              )}
+
             </div>
           ))}
         </div>

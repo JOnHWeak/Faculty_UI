@@ -8,15 +8,14 @@ import {
 } from '../../services/mockApi';
 import MessageThread from './MessageThread';
 import ActionPanel from './ActionPanel';
-import AIResponseEditor from './AIResponseEditor';
+
 
 const ConversationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { setLoading, showNotification } = useApp();
   const [conversation, setConversation] = useState(null);
-  const [showAIEditor, setShowAIEditor] = useState(false);
-  const [selectedAIMessage, setSelectedAIMessage] = useState(null);
+
 
 
   useEffect(() => {
@@ -70,17 +69,9 @@ const ConversationDetail = () => {
     await handleStatusUpdate('Đã giải quyết', reason);
   };
 
-  const handleOpenAIEditor = () => {
-    const aiMessage = conversation.messages.find(m => m.author === 'AI');
-    if (aiMessage) {
-      setSelectedAIMessage(aiMessage);
-      setShowAIEditor(true);
-    } else {
-      showNotification('Không tìm thấy câu trả lời của AI để chỉnh sửa', 'warning');
-    }
-  };
 
-  const handleSaveAIResponse = async (messageId, newContent) => {
+
+  const handleUpdateMessage = async (messageId, newContent) => {
     try {
       const response = await updateAIResponse(id, messageId, newContent);
       if (response.success) {
@@ -158,7 +149,10 @@ const ConversationDetail = () => {
           </div>
 
           {/* Message Thread */}
-          <MessageThread messages={conversation.messages} />
+          <MessageThread
+            messages={conversation.messages}
+            onUpdateMessage={handleUpdateMessage}
+          />
 
 
         </div>
@@ -239,20 +233,13 @@ const ConversationDetail = () => {
             conversation={conversation}
             onMarkAsRead={handleMarkAsRead}
             onResolve={handleResolve}
-            onEditAIResponse={handleOpenAIEditor}
           />
 
 
         </div>
       </div>
 
-      {/* AI Response Editor */}
-      <AIResponseEditor
-        isOpen={showAIEditor}
-        onClose={() => setShowAIEditor(false)}
-        aiMessage={selectedAIMessage}
-        onSave={handleSaveAIResponse}
-      />
+
     </div>
   );
 };

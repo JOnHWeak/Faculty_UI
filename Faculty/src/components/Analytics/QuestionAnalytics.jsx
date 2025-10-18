@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { getAnalytics } from '../../services/mockApi';
 import QuestionStats from './QuestionStats';
-import TopicChart from './TopicChart';
+
 import TrendChart from './TrendChart';
 
 const QuestionAnalytics = () => {
@@ -112,19 +112,7 @@ const QuestionAnalytics = () => {
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body text-center">
-            <div style={{ fontSize: '32px', color: '#722ed1', marginBottom: '8px' }}>
-              😊
-            </div>
-            <div style={{ fontSize: '24px', fontWeight: '600', color: '#262626' }}>
-              {analyticsData.overview.satisfaction}%
-            </div>
-            <div style={{ fontSize: '14px', color: '#8c8c8c' }}>
-              Tỷ lệ hài lòng
-            </div>
-          </div>
-        </div>
+
       </div>
 
       {/* Charts Row */}
@@ -133,7 +121,7 @@ const QuestionAnalytics = () => {
         gridTemplateColumns: '1fr 1fr',
         gap: '20px'
       }}>
-        {/* Course Stats Chart */}
+        {/* Course Stats Chart
         <div className="card">
           <div className="card-header">
             <h3 className="card-title">Top 5 môn học được hỏi nhiều nhất</h3>
@@ -141,17 +129,9 @@ const QuestionAnalytics = () => {
           <div className="card-body">
             <QuestionStats data={analyticsData.courseStats} />
           </div>
-        </div>
+        </div> */}
 
-        {/* Topic Distribution Chart */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Phân bố chủ đề câu hỏi</h3>
-          </div>
-          <div className="card-body">
-            <TopicChart data={analyticsData.topicDistribution} />
-          </div>
-        </div>
+
       </div>
 
       {/* Trend Chart */}
