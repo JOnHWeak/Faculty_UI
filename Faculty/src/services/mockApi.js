@@ -148,6 +148,29 @@ export const addConversationReply = async (id, replyData, auditEntry) => {
   return { success: false, error: "Conversation not found" };
 };
 
+export const updateAIResponse = async (conversationId, messageId, newContent) => {
+  await delay(300);
+  const conversation = mockFlaggedConversations.find(conv => conv.id === conversationId);
+  if (!conversation) {
+    return { success: false, error: "Conversation not found" };
+  }
+
+  const message = conversation.messages.find(msg => msg.id === messageId);
+  if (!message) {
+    return { success: false, error: "Message not found" };
+  }
+
+  if (message.author !== 'AI') {
+    return { success: false, error: "Message is not from AI" };
+  }
+
+  // Update the message content
+  message.content = newContent;
+  message.editedAt = new Date().toISOString();
+
+  return { success: true, data: conversation };
+};
+
 // Materials API
 export const getMaterials = async () => {
   await delay();
@@ -156,35 +179,54 @@ export const getMaterials = async () => {
 
 export const uploadMaterial = async (materialData) => {
   await delay(800);
-  const { semesterId, courseId, file } = materialData;
-  
+  const { semesterId, courseId, file, learningObjectives, commonChallenges } = materialData;
+
   const semester = mockMaterialsData.semesters.find(s => s.id === semesterId);
   if (!semester) return { success: false, error: "Semester not found" };
-  
+
   const course = semester.courses.find(c => c.id === courseId);
   if (!course) return { success: false, error: "Course not found" };
-  
+
   const newMaterial = {
     id: `M${Date.now()}`,
     fileName: file.name,
     size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
     uploadedAt: new Date().toISOString(),
     uploadedBy: "Current User",
-    url: "#"
+    url: "#",
+    learningObjectives: learningObjectives || "",
+    commonChallenges: commonChallenges || ""
   };
-  
+
   course.materials.push(newMaterial);
   return { success: true, data: newMaterial };
+};
+
+export const updateMaterial = async (materialId, updateData) => {
+  await delay(300);
+
+  // Find the material across all semesters and courses
+  for (const semester of mockMaterialsData.semesters) {
+    for (const course of semester.courses) {
+      const material = course.materials.find(m => m.id === materialId);
+      if (material) {
+        Object.assign(material, updateData);
+        return { success: true, data: material };
+      }
+    }
+  }
+
+  return { success: false, error: "Material not found" };
 };
 
 export const deleteMaterial = async (semesterId, courseId, materialId) => {
   await delay(300);
   const semester = mockMaterialsData.semesters.find(s => s.id === semesterId);
   if (!semester) return { success: false, error: "Semester not found" };
-  
+
   const course = semester.courses.find(c => c.id === courseId);
   if (!course) return { success: false, error: "Course not found" };
-  
+
   const materialIndex = course.materials.findIndex(m => m.id === materialId);
   if (materialIndex !== -1) {
     course.materials.splice(materialIndex, 1);

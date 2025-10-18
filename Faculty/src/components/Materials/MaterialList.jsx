@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MaterialList = ({ materials, semesterId, courseId, onDeleteMaterial }) => {
+const MaterialList = ({ materials, semesterId, courseId, onDeleteMaterial, onEditMaterial }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -25,6 +25,10 @@ const MaterialList = ({ materials, semesterId, courseId, onDeleteMaterial }) => 
 
   const handleDelete = (materialId) => {
     onDeleteMaterial(semesterId, courseId, materialId);
+  };
+
+  const handleEdit = (material) => {
+    onEditMaterial(material);
   };
 
   if (!materials || materials.length === 0) {
@@ -97,15 +101,20 @@ const MaterialList = ({ materials, semesterId, courseId, onDeleteMaterial }) => 
                     onClick={() => handleDownload(material)}
                     title="Tải xuống"
                   >
-                    📥
+            [object Object]                  </button>
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => handleEdit(material)}
+                    title="Chỉnh sửa"
+                  >
+                    ✏️
                   </button>
                   <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleDelete(material.id)}
                     title="Xóa"
                   >
-                    🗑️
-                  </button>
+           [object Object]n                  </button>
                 </div>
               </td>
             </tr>

@@ -9,7 +9,7 @@ import MaterialsManagement from './components/Materials/MaterialsManagement';
 import QuestionAnalytics from './components/Analytics/QuestionAnalytics';
 import KnowledgeGapAnalysis from './components/KnowledgeGap/KnowledgeGapAnalysis';
 import QuizDetail from './components/KnowledgeGap/QuizDetail';
-import LearningOutcomesManagement from './components/LearningOutcomes/LearningOutcomesManagement';
+
 import './App.css';
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
               <Route path="analytics" element={<QuestionAnalytics />} />
               <Route path="knowledge-gap" element={<KnowledgeGapAnalysis />} />
               <Route path="knowledge-gap/quiz/:id" element={<QuizDetail />} />
-              <Route path="learning-outcomes" element={<LearningOutcomesManagement />} />
+
             </Route>
           </Routes>
         </div>

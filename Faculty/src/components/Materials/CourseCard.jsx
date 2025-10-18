@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import MaterialList from './MaterialList';
 
-const CourseCard = ({ course, semesterId, onDeleteMaterial }) => {
+const CourseCard = ({ course, semesterId, onDeleteMaterial, onEditMaterial }) => {
   const [expanded, setExpanded] = useState(false);
 
   const formatFileSize = (sizeStr) => {
@@ -83,6 +83,7 @@ const CourseCard = ({ course, semesterId, onDeleteMaterial }) => {
             semesterId={semesterId}
             courseId={course.id}
             onDeleteMaterial={onDeleteMaterial}
+            onEditMaterial={onEditMaterial}
           />
         </div>
       )}

@@ -7,16 +7,12 @@ const FlaggedConversations = () => {
   const navigate = useNavigate();
   const { setLoading, showNotification } = useApp();
   const [conversations, setConversations] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [filters, setFilters] = useState({
     status: '',
-    course: '',
-    priority: ''
   });
 
   useEffect(() => {
     loadConversations();
-    loadCourses();
   }, []);
 
   useEffect(() => {
@@ -35,14 +31,7 @@ const FlaggedConversations = () => {
     }
   };
 
-  const loadCourses = async () => {
-    try {
-      const response = await getCourses();
-      setCourses(response.data);
-    } catch (error) {
-      console.error('Error loading courses:', error);
-    }
-  };
+
 
   const handleFilterChange = (field, value) => {
     setFilters({ ...filters, [field]: value });
@@ -77,20 +66,7 @@ const FlaggedConversations = () => {
     );
   };
 
-  const getPriorityBadge = (priority) => {
-    const priorityConfig = {
-      'Cao': { class: 'priority-high', icon: '🔴' },
-      'Trung bình': { class: 'priority-medium', icon: '🟡' },
-      'Thấp': { class: 'priority-low', icon: '🟢' }
-    };
 
-    const config = priorityConfig[priority] || priorityConfig['Trung bình'];
-    return (
-      <span className={`status-badge ${config.class}`}>
-        {config.icon} {priority}
-      </span>
-    );
-  };
 
   const getConfidenceColor = (confidence) => {
     if (confidence < 30) return '#ff4d4f';
@@ -126,35 +102,9 @@ const FlaggedConversations = () => {
               </select>
             </div>
             
-            <div style={{ minWidth: '200px' }}>
-              <select
-                className="form-select"
-                value={filters.course}
-                onChange={(e) => handleFilterChange('course', e.target.value)}
-              >
-                <option value="">Tất cả môn học</option>
-                {courses.map(course => (
-                  <option key={course} value={course}>{course}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div style={{ minWidth: '150px' }}>
-              <select
-                className="form-select"
-                value={filters.priority}
-                onChange={(e) => handleFilterChange('priority', e.target.value)}
-              >
-                <option value="">Tất cả mức độ</option>
-                <option value="Cao">Cao</option>
-                <option value="Trung bình">Trung bình</option>
-                <option value="Thấp">Thấp</option>
-              </select>
-            </div>
-            
             <button
               className="btn btn-secondary"
-              onClick={() => setFilters({ status: '', course: '', priority: '' })}
+              onClick={() => setFilters({ status: '' })}
             >
               🔄 Reset
             </button>
@@ -180,12 +130,9 @@ const FlaggedConversations = () => {
               <tr>
                 <th>ID</th>
                 <th>Sinh viên</th>
-                <th>Môn học</th>
                 <th>Nội dung</th>
                 <th>Lý do gắn cờ</th>
-                <th>Độ tin cậy AI</th>
                 <th>Trạng thái</th>
-                <th>Mức độ</th>
                 <th>Thời gian</th>
               </tr>
             </thead>
@@ -216,17 +163,9 @@ const FlaggedConversations = () => {
                       <span>{conversation.student.name}</span>
                     </div>
                   </td>
-                  <td>
-                    <span className="status-badge" style={{ 
-                      backgroundColor: '#e6f7ff', 
-                      color: '#0958d9' 
-                    }}>
-                      {conversation.course}
-                    </span>
-                  </td>
                   <td style={{ maxWidth: '200px' }}>
-                    <div style={{ 
-                      overflow: 'hidden', 
+                    <div style={{
+                      overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap'
                     }}>
@@ -234,37 +173,7 @@ const FlaggedConversations = () => {
                     </div>
                   </td>
                   <td>{conversation.flagReason}</td>
-                  <td>
-                    <div className="d-flex align-items-center gap-1">
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '8px',
-                          backgroundColor: '#f0f0f0',
-                          borderRadius: '4px',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: `${conversation.aiConfidence}%`,
-                            height: '100%',
-                            backgroundColor: getConfidenceColor(conversation.aiConfidence),
-                            transition: 'width 0.3s'
-                          }}
-                        />
-                      </div>
-                      <span style={{ 
-                        fontSize: '12px',
-                        color: getConfidenceColor(conversation.aiConfidence),
-                        fontWeight: '500'
-                      }}>
-                        {conversation.aiConfidence}%
-                      </span>
-                    </div>
-                  </td>
                   <td>{getStatusBadge(conversation.status)}</td>
-                  <td>{getPriorityBadge(conversation.priority)}</td>
                   <td style={{ fontSize: '12px', color: '#8c8c8c' }}>
                     {formatDate(conversation.flaggedAt)}
                   </td>

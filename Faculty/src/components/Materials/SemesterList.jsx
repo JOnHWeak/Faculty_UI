@@ -1,7 +1,7 @@
 import React from 'react';
 import CourseCard from './CourseCard';
 
-const SemesterList = ({ semester, onDeleteMaterial }) => {
+const SemesterList = ({ semester, onDeleteMaterial, onEditMaterial }) => {
   if (!semester || !semester.courses) {
     return (
       <div className="card">
@@ -49,6 +49,7 @@ const SemesterList = ({ semester, onDeleteMaterial }) => {
               course={course}
               semesterId={semester.id}
               onDeleteMaterial={onDeleteMaterial}
+              onEditMaterial={onEditMaterial}
             />
           ))}
         </div>

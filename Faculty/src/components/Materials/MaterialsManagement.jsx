@@ -3,6 +3,7 @@ import { useApp } from '../../contexts/AppContext';
 import { getMaterials, uploadMaterial, deleteMaterial, addCourse } from '../../services/mockApi';
 import SemesterList from './SemesterList';
 import UploadForm from './UploadForm';
+import EditMaterialForm from './EditMaterialForm';
 
 const MaterialsManagement = () => {
   const { setLoading, showNotification } = useApp();
@@ -10,6 +11,8 @@ const MaterialsManagement = () => {
   const [selectedSemester, setSelectedSemester] = useState('');
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [showAddCourseForm, setShowAddCourseForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingMaterial, setEditingMaterial] = useState(null);
   const [newCourseData, setNewCourseData] = useState({ code: '', name: '' });
 
   useEffect(() => {
@@ -35,6 +38,17 @@ const MaterialsManagement = () => {
 
   const handleUploadSuccess = () => {
     setShowUploadForm(false);
+    loadMaterials();
+  };
+
+  const handleEditMaterial = (material) => {
+    setEditingMaterial(material);
+    setShowEditForm(true);
+  };
+
+  const handleEditSuccess = () => {
+    setShowEditForm(false);
+    setEditingMaterial(null);
     loadMaterials();
   };
 
@@ -132,6 +146,7 @@ const MaterialsManagement = () => {
         <SemesterList
           semester={selectedSemesterData}
           onDeleteMaterial={handleDeleteMaterial}
+          onEditMaterial={handleEditMaterial}
         />
       ) : (
         <div className="card">
@@ -171,6 +186,40 @@ const MaterialsManagement = () => {
               semester={selectedSemesterData}
               onSuccess={handleUploadSuccess}
               onCancel={() => setShowUploadForm(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Edit Material Form Modal */}
+      {showEditForm && editingMaterial && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            width: '90%',
+            maxWidth: '600px',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <EditMaterialForm
+              material={editingMaterial}
+              onSuccess={handleEditSuccess}
+              onCancel={() => {
+                setShowEditForm(false);
+                setEditingMaterial(null);
+              }}
             />
           </div>
         </div>

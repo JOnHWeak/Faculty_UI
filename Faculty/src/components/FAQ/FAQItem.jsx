@@ -102,8 +102,7 @@ const FAQItem = ({ faq, onEdit, onDelete }) => {
         <div className="d-flex justify-content-between align-items-center text-muted" 
              style={{ fontSize: '12px' }}>
           <div className="d-flex align-items-center gap-3">
-            <span>👁️ Đã sử dụng: {faq.usageCount} lần</span>
-            <span>👤 Cập nhật bởi: {faq.updatedBy}</span>
+            <span> Cập nhật bởi: {faq.updatedBy}</span>
           </div>
           <span>🕒 {formatDate(faq.createdAt)}</span>
         </div>

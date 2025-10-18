@@ -36,12 +36,7 @@ const Sidebar = () => {
       label: 'Lỗ hổng kiến thức',
       badge: null
     },
-    {
-      path: '/learning-outcomes',
-      icon: '✅',
-      label: 'Mục tiêu & Thách thức',
-      badge: null
-    }
+
   ];
 
   return (

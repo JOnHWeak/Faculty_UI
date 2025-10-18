@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../../contexts/AppContext';
-import { 
-  getConversationDetail, 
-  updateConversationStatus, 
-  assignConversation, 
-  addConversationReply,
-  getFacultyMembers 
+import {
+  getConversationDetail,
+  updateConversationStatus,
+  updateAIResponse
 } from '../../services/mockApi';
 import MessageThread from './MessageThread';
 import ActionPanel from './ActionPanel';
+import AIResponseEditor from './AIResponseEditor';
 
 const ConversationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { setLoading, showNotification } = useApp();
   const [conversation, setConversation] = useState(null);
-  const [facultyMembers, setFacultyMembers] = useState([]);
-  const [showReplyForm, setShowReplyForm] = useState(false);
-  const [replyContent, setReplyContent] = useState('');
+  const [showAIEditor, setShowAIEditor] = useState(false);
+  const [selectedAIMessage, setSelectedAIMessage] = useState(null);
+
 
   useEffect(() => {
     loadConversationDetail();
-    loadFacultyMembers();
   }, [id]);
 
   const loadConversationDetail = async () => {
@@ -43,25 +41,12 @@ const ConversationDetail = () => {
     }
   };
 
-  const loadFacultyMembers = async () => {
-    try {
-      const response = await getFacultyMembers();
-      setFacultyMembers(response.data);
-    } catch (error) {
-      console.error('Error loading faculty members:', error);
-    }
-  };
+
 
   const handleStatusUpdate = async (newStatus, reason) => {
     try {
       setLoading(true);
-      const auditEntry = {
-        action: `Cập nhật trạng thái thành "${newStatus}"`,
-        user: "Current User",
-        details: reason || `Trạng thái được thay đổi thành ${newStatus}`
-      };
-      
-      const response = await updateConversationStatus(id, newStatus, auditEntry);
+      const response = await updateConversationStatus(id, newStatus);
       if (response.success) {
         setConversation(response.data);
         showNotification(`Đã cập nhật trạng thái thành "${newStatus}"`, 'success');
@@ -73,60 +58,9 @@ const ConversationDetail = () => {
     }
   };
 
-  const handleAssignment = async (facultyId) => {
-    try {
-      setLoading(true);
-      const faculty = facultyMembers.find(f => f.id === facultyId);
-      const auditEntry = {
-        action: "Phân công xử lý",
-        user: "Current User",
-        details: `Phân công cho ${faculty?.name || 'Unknown'}`
-      };
-      
-      const response = await assignConversation(id, facultyId, auditEntry);
-      if (response.success) {
-        setConversation(response.data);
-        showNotification(`Đã phân công cho ${faculty?.name}`, 'success');
-      }
-    } catch (error) {
-      showNotification('Lỗi khi phân công', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleReply = async () => {
-    if (!replyContent.trim()) {
-      showNotification('Vui lòng nhập nội dung trả lời', 'warning');
-      return;
-    }
 
-    try {
-      setLoading(true);
-      const replyData = {
-        author: "Current User",
-        content: replyContent
-      };
-      
-      const auditEntry = {
-        action: "Trả lời công khai",
-        user: "Current User",
-        details: "Đã gửi trả lời công khai cho sinh viên"
-      };
-      
-      const response = await addConversationReply(id, replyData, auditEntry);
-      if (response.success) {
-        setConversation(response.data);
-        setReplyContent('');
-        setShowReplyForm(false);
-        showNotification('Đã gửi trả lời thành công', 'success');
-      }
-    } catch (error) {
-      showNotification('Lỗi khi gửi trả lời', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleMarkAsRead = async () => {
     await handleStatusUpdate('Đang xử lý', 'Đã đọc và đang xử lý');
@@ -134,6 +68,30 @@ const ConversationDetail = () => {
 
   const handleResolve = async (reason) => {
     await handleStatusUpdate('Đã giải quyết', reason);
+  };
+
+  const handleOpenAIEditor = () => {
+    const aiMessage = conversation.messages.find(m => m.author === 'AI');
+    if (aiMessage) {
+      setSelectedAIMessage(aiMessage);
+      setShowAIEditor(true);
+    } else {
+      showNotification('Không tìm thấy câu trả lời của AI để chỉnh sửa', 'warning');
+    }
+  };
+
+  const handleSaveAIResponse = async (messageId, newContent) => {
+    try {
+      const response = await updateAIResponse(id, messageId, newContent);
+      if (response.success) {
+        setConversation(response.data);
+        showNotification('Đã cập nhật câu trả lời của AI', 'success');
+      } else {
+        showNotification(response.message || 'Lỗi khi cập nhật câu trả lời của AI', 'error');
+      }
+    } catch (error) {
+      showNotification('Lỗi khi cập nhật câu trả lời của AI', 'error');
+    }
   };
 
   const formatDate = (dateString) => {
@@ -166,7 +124,7 @@ const ConversationDetail = () => {
           </button>
           <h1>Chi tiết hội thoại {conversation.id}</h1>
         </div>
-        
+
         <div className="d-flex align-items-center gap-2">
           <span className={`status-badge ${
             conversation.status === 'Mới' ? 'status-new' :
@@ -175,13 +133,7 @@ const ConversationDetail = () => {
           }`}>
             {conversation.status}
           </span>
-          <span className={`status-badge ${
-            conversation.priority === 'Cao' ? 'priority-high' :
-            conversation.priority === 'Trung bình' ? 'priority-medium' :
-            'priority-low'
-          }`}>
-            {conversation.priority}
-          </span>
+
         </div>
       </div>
 
@@ -199,21 +151,7 @@ const ConversationDetail = () => {
                   <strong>Sinh viên:</strong> {conversation.student.name}
                 </div>
                 <div>
-                  <strong>Môn học:</strong> {conversation.course}
-                </div>
-                <div>
                   <strong>Lý do gắn cờ:</strong> {conversation.flagReason}
-                </div>
-                <div>
-                  <strong>Độ tin cậy AI:</strong> 
-                  <span style={{ 
-                    color: conversation.aiConfidence < 30 ? '#ff4d4f' : 
-                           conversation.aiConfidence < 70 ? '#faad14' : '#52c41a',
-                    fontWeight: '600',
-                    marginLeft: '4px'
-                  }}>
-                    {conversation.aiConfidence}%
-                  </span>
                 </div>
               </div>
             </div>
@@ -222,40 +160,7 @@ const ConversationDetail = () => {
           {/* Message Thread */}
           <MessageThread messages={conversation.messages} />
 
-          {/* Reply Form */}
-          {showReplyForm && (
-            <div className="card mt-3">
-              <div className="card-header">
-                <h4 className="card-title">Trả lời công khai</h4>
-              </div>
-              <div className="card-body">
-                <textarea
-                  className="form-textarea"
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder="Nhập câu trả lời của bạn..."
-                  rows={4}
-                />
-                <div className="d-flex justify-content-between mt-2">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setShowReplyForm(false);
-                      setReplyContent('');
-                    }}
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleReply}
-                  >
-                    Gửi trả lời
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+
         </div>
 
         {/* Sidebar */}
@@ -287,82 +192,67 @@ const ConversationDetail = () => {
             </div>
           </div>
 
-          {/* Metadata */}
+          {/* File Attachments */}
           <div className="card mb-3">
             <div className="card-header">
-              <h4 className="card-title">Metadata</h4>
+              <h4 className="card-title">Tệp đính kèm</h4>
             </div>
             <div className="card-body">
-              <div className="mb-2">
-                <strong>Roadmap Node:</strong>
-                <div style={{ fontSize: '14px', color: '#595959' }}>
-                  {conversation.metadata.roadmapNode}
-                </div>
-              </div>
-              <div className="mb-2">
-                <strong>AI Model:</strong>
-                <div style={{ fontSize: '14px', color: '#595959' }}>
-                  {conversation.metadata.aiModel}
-                </div>
-              </div>
-              <div>
-                <strong>Sources:</strong>
-                <div style={{ fontSize: '14px', color: '#595959' }}>
+              {conversation.metadata.sources && conversation.metadata.sources.length > 0 ? (
+                <div>
                   {conversation.metadata.sources.map((source, index) => (
-                    <div key={index}>• {source}</div>
+                    <div key={index} className="d-flex align-items-center gap-2 mb-2 p-2"
+                         style={{
+                           backgroundColor: '#f8f9fa',
+                           borderRadius: '6px',
+                           border: '1px solid #e9ecef'
+                         }}>
+                      <div style={{ fontSize: '16px' }}>📄</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                          {source.split('/').pop() || `Document ${index + 1}`}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#6c757d' }}>
+                          {source}
+                        </div>
+                      </div>
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => window.open(source, '_blank')}
+                        style={{ fontSize: '12px' }}
+                      >
+                        📥 Tải xuống
+                      </button>
+                    </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <div style={{ color: '#8c8c8c', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
+                  Không có tệp đính kèm
+                </div>
+              )}
             </div>
           </div>
 
           {/* Action Panel */}
           <ActionPanel
             conversation={conversation}
-            facultyMembers={facultyMembers}
-            onStatusUpdate={handleStatusUpdate}
-            onAssignment={handleAssignment}
             onMarkAsRead={handleMarkAsRead}
             onResolve={handleResolve}
-            onShowReplyForm={() => setShowReplyForm(true)}
+            onEditAIResponse={handleOpenAIEditor}
           />
 
-          {/* Audit Trail */}
-          <div className="card">
-            <div className="card-header">
-              <h4 className="card-title">Lịch sử thao tác</h4>
-            </div>
-            <div className="card-body">
-              {conversation.auditTrail.length === 0 ? (
-                <div style={{ color: '#8c8c8c', fontStyle: 'italic' }}>
-                  Chưa có thao tác nào
-                </div>
-              ) : (
-                <div>
-                  {conversation.auditTrail.map((entry, index) => (
-                    <div key={index} className="mb-2" style={{ 
-                      paddingBottom: '8px',
-                      borderBottom: index < conversation.auditTrail.length - 1 ? '1px solid #f0f0f0' : 'none'
-                    }}>
-                      <div style={{ fontWeight: '500', fontSize: '14px' }}>
-                        {entry.action}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#8c8c8c' }}>
-                        {entry.user} • {formatDate(entry.timestamp)}
-                      </div>
-                      {entry.details && (
-                        <div style={{ fontSize: '12px', color: '#595959', marginTop: '2px' }}>
-                          {entry.details}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+
         </div>
       </div>
+
+      {/* AI Response Editor */}
+      <AIResponseEditor
+        isOpen={showAIEditor}
+        onClose={() => setShowAIEditor(false)}
+        aiMessage={selectedAIMessage}
+        onSave={handleSaveAIResponse}
+      />
     </div>
   );
 };

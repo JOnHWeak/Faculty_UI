@@ -7,6 +7,8 @@ const UploadForm = ({ semester, onSuccess, onCancel }) => {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [learningObjectives, setLearningObjectives] = useState('');
+  const [commonChallenges, setCommonChallenges] = useState('');
 
   const handleFileSelect = (file) => {
     if (file && file.type === 'application/pdf') {
@@ -61,7 +63,9 @@ const UploadForm = ({ semester, onSuccess, onCancel }) => {
       const response = await uploadMaterial({
         semesterId: semester.id,
         courseId: selectedCourse,
-        file: selectedFile
+        file: selectedFile,
+        learningObjectives: learningObjectives,
+        commonChallenges: commonChallenges
       });
       
       if (response.success) {
@@ -117,6 +121,30 @@ const UploadForm = ({ semester, onSuccess, onCancel }) => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Mục tiêu học tập</label>
+            <textarea
+              className="form-input"
+              value={learningObjectives}
+              onChange={(e) => setLearningObjectives(e.target.value)}
+              placeholder="Nhập mục tiêu học tập cho tài liệu này..."
+              rows="3"
+              style={{ resize: 'vertical' }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Thách thức thường gặp</label>
+            <textarea
+              className="form-input"
+              value={commonChallenges}
+              onChange={(e) => setCommonChallenges(e.target.value)}
+              placeholder="Nhập các thách thức thường gặp khi học tài liệu này..."
+              rows="3"
+              style={{ resize: 'vertical' }}
+            />
           </div>
 
           <div className="form-group">
